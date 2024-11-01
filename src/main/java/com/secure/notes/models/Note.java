@@ -1,4 +1,4 @@
-package com.example.notes.models;
+package com.secure.notes.models;
 
 import jakarta.persistence.*;
 import lombok.Data;

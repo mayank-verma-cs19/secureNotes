@@ -1,10 +1,9 @@
-package com.example.notes.contollers;
+package com.secure.notes.contollers;
 
-import com.example.notes.models.Note;
-import com.example.notes.service.NoteService;
+import com.secure.notes.models.Note;
+import com.secure.notes.services.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 

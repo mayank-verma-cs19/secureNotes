@@ -1,4 +1,4 @@
-package com.example.notes.models;
+package com.secure.notes.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.security.core.userdetails.User;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,5 +34,5 @@ public class Role{
 
     public Role(AppRole roleName) {
         this.roleName = roleName;
-    } 
+    }
 }

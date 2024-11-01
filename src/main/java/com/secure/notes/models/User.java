@@ -1,4 +1,4 @@
-package com.example.notes.models;
+package com.secure.notes.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
