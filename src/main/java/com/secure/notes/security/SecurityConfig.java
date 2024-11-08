@@ -40,6 +40,7 @@ public class SecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .ignoringRequestMatchers("api/auth/public/**"));
+        http.cors();
         http.authorizeHttpRequests((requests)
                 -> requests
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -62,6 +63,15 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();}
+
+    @Bean
     public CommandLineRunner initData(RoleRepository roleRepository,
                                       UserRepository userRepository,
                                       PasswordEncoder passwordEncoder) {
@@ -74,7 +84,7 @@ public class SecurityConfig {
 
             if (!userRepository.existsByUserName("user1")) {
                 User user1 = new User("user1", "user1@example.com",
-                        passwordEncoder.encode("password1"));
+                            passwordEncoder.encode("password1"));
                 user1.setAccountNonLocked(false);
                 user1.setAccountNonExpired(true);
                 user1.setCredentialsNonExpired(true);
@@ -102,18 +112,6 @@ public class SecurityConfig {
                 userRepository.save(admin);
             }
         };
-    }
-
-
-
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
     }
     //    @Bean
 //    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {

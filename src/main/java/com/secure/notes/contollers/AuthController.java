@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3001" , maxAge = 3600 , allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:3000" , maxAge = 3600 , allowCredentials = "true")
 public class AuthController {
 
     @Autowired

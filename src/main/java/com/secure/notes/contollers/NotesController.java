@@ -16,29 +16,32 @@ public class NotesController {
     @Autowired
     private NoteService noteService;
 
-
     @PostMapping
-    public Note createNote (@RequestBody String contet , @AuthenticationPrincipal UserDetails userDetails) {
+    public Note createNote(@RequestBody String content,
+                           @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
-        System.out.println("User Details: " + username);
-        return noteService.createNoteForUser(username, contet);
+        System.out.println("USER DETAILS: " + username);
+        return noteService.createNoteForUser(username, content);
     }
 
     @GetMapping
-    public List<Note> getAllNotes(@AuthenticationPrincipal UserDetails userDetails) {
+    public List<Note> getUserNotes(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
-        System.out.println("User Details: " + username);
-        return noteService.getAllNotesForUser(username);
+        System.out.println("USER DETAILS: " + username);
+        return noteService.getNotesForUser(username);
     }
 
     @PutMapping("/{noteId}")
-    public Note updateNote(@PathVariable Long noteId, @RequestBody String content , @AuthenticationPrincipal UserDetails userDetails) {
+    public Note updateNote(@PathVariable Long noteId,
+                           @RequestBody String content,
+                           @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
-        return noteService.updateNoteForUSer(noteId, content, username);
+        return noteService.updateNoteForUser(noteId, content, username);
     }
 
     @DeleteMapping("/{noteId}")
-    public void deleteNote(@PathVariable Long noteId, @AuthenticationPrincipal UserDetails userDetails) {
+    public void deleteNote(@PathVariable Long noteId,
+                           @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         noteService.deleteNoteForUser(noteId, username);
     }
