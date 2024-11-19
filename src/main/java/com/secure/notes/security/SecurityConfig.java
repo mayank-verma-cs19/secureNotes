@@ -30,11 +30,13 @@ import java.time.LocalDate;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true,securedEnabled = true,jsr250Enabled = true)
+@EnableMethodSecurity(prePostEnabled = true,
+        securedEnabled = true,
+        jsr250Enabled = true)
 public class SecurityConfig {
-
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
@@ -43,43 +45,46 @@ public class SecurityConfig {
     OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("api/auth/public/**"));
-        http.cors();
-        http.authorizeHttpRequests((requests)
-                -> requests
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("api/csrf-token").permitAll()
-                .requestMatchers("/api/auth/public/**").permitAll()
-                .requestMatchers("/oauth2/**").permitAll()
-                .anyRequest().authenticated())
-                .oauth2Login(oauth -> {
-                        oauth.successHandler(oAuth2LoginSuccessHandler);
-                });
-        http.exceptionHandling(exception ->
-                exception.authenticationEntryPoint(unauthorizedHandler));
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//        http.csrf(AbstractHttpConfigurer::disable); this is to disable csrf token
-      //  http.addFilterBefore(new CustomLoggingFilter(), UsernamePasswordAuthenticationFilter.class); // this are the ways why which we can use our custom filters
-        //http.addFilterAfter(new RequestValidationFilter() , CustomLoggingFilter.class);
-        http.formLogin(withDefaults()); // this is to change form type
-        http.httpBasic(withDefaults());
-        return http.build();
-    }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
 
     @Bean
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf ->
+                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/api/auth/public/**")
+        );
+        http.cors();
+        //http.csrf(AbstractHttpConfigurer::disable);
+        http.authorizeHttpRequests((requests)
+                        -> requests
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/csrf-token").permitAll()
+                        .requestMatchers("/api/auth/public/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
+                        .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> {
+                    oauth2.successHandler(oAuth2LoginSuccessHandler);
+                });
+        http.exceptionHandling(exception
+                -> exception.authenticationEntryPoint(unauthorizedHandler));
+        http.addFilterBefore(authenticationJwtTokenFilter(),
+                UsernamePasswordAuthenticationFilter.class);
+        http.formLogin(withDefaults());
+        http.httpBasic(withDefaults());
+        return http.build();
+    }
+
+    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();}
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public CommandLineRunner initData(RoleRepository roleRepository,
@@ -94,7 +99,7 @@ public class SecurityConfig {
 
             if (!userRepository.existsByUserName("user1")) {
                 User user1 = new User("user1", "user1@example.com",
-                            passwordEncoder.encode("password1"));
+                        passwordEncoder.encode("password1"));
                 user1.setAccountNonLocked(false);
                 user1.setAccountNonExpired(true);
                 user1.setCredentialsNonExpired(true);
@@ -123,7 +128,9 @@ public class SecurityConfig {
             }
         };
     }
-    //    @Bean
+}
+
+//    @Bean
 //    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 //        http.authorizeHttpRequests((requests) ->
 //                requests
@@ -188,4 +195,4 @@ public class SecurityConfig {
 //    }
 
 
-}
+

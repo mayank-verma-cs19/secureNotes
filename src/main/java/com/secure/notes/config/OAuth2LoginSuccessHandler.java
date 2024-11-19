@@ -117,9 +117,10 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         Set<SimpleGrantedAuthority> authorities = new HashSet<>(oauth2User.getAuthorities().stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
                 .collect(Collectors.toList()));
-
-        User user = userService.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("User not found"));
         authorities.add(new SimpleGrantedAuthority(user.getRole().getRoleName().name()));
+
         // Create UserDetailsImpl instance
         UserDetailsImpl userDetails = new UserDetailsImpl(
                 null,
@@ -141,3 +142,5 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         super.onAuthenticationSuccess(request, response, authentication);
     }
 }
+
+// 4391230896400381
