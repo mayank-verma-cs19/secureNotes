@@ -51,12 +51,9 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf ->
-                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/api/auth/public/**")
-        );
+        http.csrf(AbstractHttpConfigurer::disable); // Disable CSRF token protection
         http.cors();
-        //http.csrf(AbstractHttpConfigurer::disable);
+
         http.authorizeHttpRequests((requests)
                         -> requests
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -64,15 +61,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/public/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
                         .anyRequest().authenticated())
-                .oauth2Login(oauth2 -> {
-                    oauth2.successHandler(oAuth2LoginSuccessHandler);
-                });
-        http.exceptionHandling(exception
-                -> exception.authenticationEntryPoint(unauthorizedHandler));
-        http.addFilterBefore(authenticationJwtTokenFilter(),
-                UsernamePasswordAuthenticationFilter.class);
+                .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler));
+
+        http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
+
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
+
         return http.build();
     }
 
